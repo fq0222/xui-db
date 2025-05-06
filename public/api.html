@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Infos API Tester</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    input, button {
+      margin: 5px 0;
+      padding: 8px;
+      font-size: 14px;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Client Infos API Tester</h1>
+
+  <!-- 获取所有记录 -->
+  <section>
+    <h2>获取所有记录</h2>
+    <button onclick="getAllClients()">获取所有记录</button>
+    <div id="getAllClientsResult" class="result"></div>
+  </section>
+
+  <!-- 根据 email 获取流量信息 -->
+  <section>
+    <h2>根据 Email 获取流量信息</h2>
+    <label for="emailToGetFlow">Email:</label>
+    <input type="text" id="emailToGetFlow" placeholder="Enter email">
+    <button onclick="getFlowByEmail()">获取流量信息</button>
+    <div id="getFlowByEmailResult" class="result"></div>
+  </section>
+
+  <!-- 读取 setting 字段中的 clients -->
+  <section>
+    <h2>读取 Setting 字段中的 Clients</h2>
+    <button onclick="getClientsFromSetting()">获取 Clients</button>
+    <div id="getClientsFromSettingResult" class="result"></div>
+  </section>
+
+  <!-- 根据 clients 的 id 更新 client_infos 表中的 enable -->
+  <section>
+    <h2>根据 Clients 的 ID 更新 Enable</h2>
+    <label for="clientIdToUpdate">Client ID:</label>
+    <input type="text" id="clientIdToUpdate" placeholder="Enter client ID">
+    <label for="enableToUpdateById">Enable:</label>
+    <input type="number" id="enableToUpdateById" placeholder="Enter enable (0 or 1)">
+    <button onclick="updateEnableByClientId()">更新 Enable</button>
+    <div id="updateEnableByClientIdResult" class="result"></div>
+  </section>
+
+  <!-- 根据 clients 的 id 修改 email -->
+  <section>
+    <h2>根据 Clients 的 ID 修改 Email</h2>
+    <label for="clientIdToUpdateEmail">Client ID:</label>
+    <input type="text" id="clientIdToUpdateEmail" placeholder="Enter client ID">
+    <label for="newEmailToUpdate">New Email:</label>
+    <input type="text" id="newEmailToUpdate" placeholder="Enter new email">
+    <button onclick="updateEmailByClientId()">更新 Email</button>
+    <div id="updateEmailByClientIdResult" class="result"></div>
+  </section>
+
+  <section>
+    <h2>根据 Clients 的 ID 删除数据</h2>
+    <label for="clientIdToDelete">Client ID:</label>
+    <input type="text" id="clientIdToDelete" placeholder="Enter client ID">
+    <button onclick="deleteClientById()">删除 Client</button>
+    <div id="deleteClientByIdResult" class="result"></div>
+  </section>
+
+  <script>
+    const apiBaseUrl = 'http://localhost:21211';
+
+    // 获取所有记录
+    async function getAllClients() {
+      try {
+        const response = await fetch(`${apiBaseUrl}/xui/info-list`);
+        const data = await response.json();
+        document.getElementById('getAllClientsResult').innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('getAllClientsResult').innerText = `Error: ${error.message}`;
+      }
+    }
+
+    // 根据 email 获取流量信息
+    async function getFlowByEmail() {
+      const email = document.getElementById('emailToGetFlow').value;
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/xui/flow/${email}/flow`);
+        const data = await response.json();
+
+        // 将流量信息转换为 GB 单位
+        const usedTrafficGB = (data.usedTraffic / (1024 ** 3)).toFixed(2); // 转换为 GB，保留两位小数
+        const totalTrafficGB = (data.totalTraffic / (1024 ** 3)).toFixed(2);
+
+        // 显示结果
+        document.getElementById('getFlowByEmailResult').innerText = 
+          `已使用流量: ${usedTrafficGB} GB\n总流量: ${totalTrafficGB} GB`;
+      } catch (error) {
+        document.getElementById('getFlowByEmailResult').innerText = `Error: ${error.message}`;
+      }
+    }
+
+    // 读取 setting 字段中的 clients
+    async function getClientsFromSetting() {
+      try {
+        const response = await fetch(`${apiBaseUrl}/xui/uuid-list`);
+        const data = await response.json();
+        document.getElementById('getClientsFromSettingResult').innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('getClientsFromSettingResult').innerText = `Error: ${error.message}`;
+      }
+    }
+
+    // 根据 clients 的 id 更新 client_infos 表中的 enable
+    async function updateEnableByClientId() {
+      const clientId = document.getElementById('clientIdToUpdate').value;
+      const enable = document.getElementById('enableToUpdateById').value;
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/xui/uuid/${clientId}/enable`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enable: Number(enable) })
+        });
+        const data = await response.json();
+        document.getElementById('updateEnableByClientIdResult').innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('updateEnableByClientIdResult').innerText = `Error: ${error.message}`;
+      }
+    }
+
+    // 根据 clients 的 id 修改 email
+    async function updateEmailByClientId() {
+      const clientId = document.getElementById('clientIdToUpdateEmail').value;
+      const newEmail = document.getElementById('newEmailToUpdate').value;
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/xui/uuid/${clientId}/email`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: newEmail })
+        });
+        const data = await response.json();
+        document.getElementById('updateEmailByClientIdResult').innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('updateEmailByClientIdResult').innerText = `Error: ${error.message}`;
+      }
+    }
+
+    // 根据 clients 的 id 删除数据
+    async function deleteClientById() {
+        const clientId = document.getElementById('clientIdToDelete').value;
+
+        try {
+        const response = await fetch(`${apiBaseUrl}/xui/uuid/${clientId}`, {
+            method: 'DELETE'
+        });
+        const data = await response.json();
+        document.getElementById('deleteClientByIdResult').innerText = JSON.stringify(data, null, 2);
+        } catch (error) {
+        document.getElementById('deleteClientByIdResult').innerText = `Error: ${error.message}`;
+        }
+    }
+  </script>
+</body>
+</html>

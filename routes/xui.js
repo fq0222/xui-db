@@ -1,0 +1,91 @@
+const express = require('express');
+const router = express.Router();
+const db = require('../db/dbHandler');
+
+
+// 读取 client_infos 表的全部内容
+router.get('/info-list', async (req, res) => {
+  try {
+    const clients = await db.getAllClients();
+    res.json(clients);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 根据 email 查询 client_infos 表中的 up, down, total 字段的值
+router.get('/flow/:email/flow', async (req, res) => {
+    const { email } = req.params;
+    try {
+        const clientInfo = db.getClientInfoFlowByEmail(email);
+        const response = {
+            usedTraffic: clientInfo.up + clientInfo.down,
+            totalTraffic: clientInfo.total
+        };
+        res.json(response);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 读取 settings 字段中的 clients
+router.get('/uuid-list', async (req, res) => {
+  try {
+    const clients = db.getClientsFromSettings();
+    res.json(clients);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 根据 clients 的 id 更新 client_infos 表中的 enable 字段
+router.put('/uuid/:id/enable', async (req, res) => {
+  const { id } = req.params;
+  const { enable } = req.body;
+
+  try {
+    const success = db.updateEnableByClientId(id, enable);
+    if (success) {
+      res.json({ message: 'Enable updated successfully' });
+    } else {
+      res.status(404).json({ error: 'Client not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 根据 clients 的 id 修改 clients 的 email 和 client_infos 表中的 email
+router.put('/uuid/:id/email', async (req, res) => {
+  const { id } = req.params;
+  const { email } = req.body;
+
+  try {
+    const success = db.updateEmailByClientId(id, email);
+    if (success) {
+      res.json({ message: 'Email updated successfully' });
+    } else {
+      res.status(404).json({ error: 'Client not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 根据 clients 的 id 删除 clients 中的该条数据，并删除 client_infos 表中 email 相同的记录
+router.delete('/uuid/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const success = db.deleteClientById(id);
+    if (success) {
+      res.json({ message: 'Client deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Client not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
