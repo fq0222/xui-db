@@ -1,6 +1,6 @@
 const logger = require('../log/logger'); // 引入 logger 模块
 
-const allowedIPs = ['127.0.0.1', '192.168.1.100']; // 替换为允许访问的 IP 地址列表
+const allowedIPs = [process.env.Allowed_IP]; // 替换为允许访问的 IP 地址列表
 
 function ipWhitelist(req, res, next) {
     // 优先从 Cloudflare 的请求头中获取真实客户端 IP

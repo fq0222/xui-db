@@ -22,7 +22,7 @@ if (PORT === 21211) {
 }
 
 // 使用 clients 路由模块
-app.use('/xui', ipWhitelist, xuiRouter);
+app.use('/xuiop', ipWhitelist, xuiRouter);
 
 
 // 启动服务器

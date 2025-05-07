@@ -3,7 +3,7 @@ const path = require('path');
 const logger = require('../log/logger'); // 引入 logger 模块
 
 // 打开数据库连接
-const dbPath = process.env.DB_PATH || path.resolve(__dirname, '../x-ui.db');
+const dbPath = process.env.DB_PATH || path.resolve(__dirname, '../../x-ui.db');
 const db = new Database(dbPath, { verbose: (sql) => logger.info(sql) }); // 使用 logger 记录 SQL 查询
 
 // 读取 client_infos 表的全部内容

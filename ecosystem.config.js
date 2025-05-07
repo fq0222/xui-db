@@ -6,6 +6,7 @@ module.exports = {
       env: {
         PORT: 80,
         DB_PATH: "./x-ui.db", // 可放入 .env 文件
+        Allowed_IP: '',
       },
       output: "/root/www/sub-admin/server_log/sub-admin-out.log", // 标准输出日志
       error: "/root/www/sub-admin/server_log/sub-admin-error.log", // 错误日志

@@ -84,7 +84,7 @@
     // 获取所有记录
     async function getAllClients() {
       try {
-        const response = await fetch(`${apiBaseUrl}/xui/info-list`);
+        const response = await fetch(`${apiBaseUrl}/xuiop/info-list`);
         const data = await response.json();
         document.getElementById('getAllClientsResult').innerText = JSON.stringify(data, null, 2);
       } catch (error) {
@@ -97,7 +97,7 @@
       const email = document.getElementById('emailToGetFlow').value;
 
       try {
-        const response = await fetch(`${apiBaseUrl}/xui/flow/${email}/flow`);
+        const response = await fetch(`${apiBaseUrl}/xuiop/flow/${email}/flow`);
         const data = await response.json();
 
         // 将流量信息转换为 GB 单位
@@ -115,7 +115,7 @@
     // 读取 setting 字段中的 clients
     async function getClientsFromSetting() {
       try {
-        const response = await fetch(`${apiBaseUrl}/xui/uuid-list`);
+        const response = await fetch(`${apiBaseUrl}/xuiop/uuid-list`);
         const data = await response.json();
         document.getElementById('getClientsFromSettingResult').innerText = JSON.stringify(data, null, 2);
       } catch (error) {
@@ -129,7 +129,7 @@
       const enable = document.getElementById('enableToUpdateById').value;
 
       try {
-        const response = await fetch(`${apiBaseUrl}/xui/uuid/${clientId}/enable`, {
+        const response = await fetch(`${apiBaseUrl}/xuiop/uuid/${clientId}/enable`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ enable: Number(enable) })
@@ -147,7 +147,7 @@
       const newEmail = document.getElementById('newEmailToUpdate').value;
 
       try {
-        const response = await fetch(`${apiBaseUrl}/xui/uuid/${clientId}/email`, {
+        const response = await fetch(`${apiBaseUrl}/xuiop/uuid/${clientId}/email`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: newEmail })
@@ -164,7 +164,7 @@
         const clientId = document.getElementById('clientIdToDelete').value;
 
         try {
-        const response = await fetch(`${apiBaseUrl}/xui/uuid/${clientId}`, {
+        const response = await fetch(`${apiBaseUrl}/xuiop/uuid/${clientId}`, {
             method: 'DELETE'
         });
         const data = await response.json();
