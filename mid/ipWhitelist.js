@@ -7,6 +7,8 @@ function ipWhitelist(req, res, next) {
     const clientIP = req.headers['cf-connecting-ip'] || req.ip.replace('::ffff:', '');
     logger.info(`Client IP: ${clientIP}`); // 记录客户端 IP
 
+    logger.info(`ip: ${req.ip}, cf-connecting-ip: ${req.headers['cf-connecting-ip']}, x-forwarded-for: ${req.headers['x-forwarded-for']}`); // 记录请求头信息
+
     // 如果是本地请求（127.0.0.1 或 ::1），直接放行
     if (clientIP === '127.0.0.1' || clientIP === '::1') {
         return next();
