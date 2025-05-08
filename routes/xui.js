@@ -17,7 +17,7 @@ router.get('/info-list', async (req, res) => {
 // 根据 email 查询 client_infos 表中的 up, down, total 字段的值
 router.get('/flow/:email/flow', async (req, res) => {
     const { email } = req.params;
-    logger.info(`Fetching flow for email: ${email}`);
+    logger.info(`/flow/:email/flow Fetching flow for email: ${email}`);
     try {
         const clientInfo = db.getClientInfoFlowByEmail(email);
         const response = {
@@ -48,9 +48,9 @@ router.put('/uuid/:id/enable', async (req, res) => {
   try {
     const success = db.updateEnableByClientId(id, enable);
     if (success) {
-      res.json({ message: 'Enable updated successfully' });
+      res.json({ message: '/uuid/:id/enable Enable updated successfully' });
     } else {
-      res.status(404).json({ error: 'Client not found' });
+      res.status(404).json({ error: '/uuid/:id/enable Client not found' });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -61,14 +61,14 @@ router.put('/uuid/:id/enable', async (req, res) => {
 router.put('/uuid/:id/email', async (req, res) => {
   const { id } = req.params;
   const { email } = req.body;
-  logger.info(`Updating email for client ID: ${id} to ${email}`);
+  logger.info(`/uuid/:id/email Updating email for client ID: ${id} to ${email}`);
 
   try {
     const success = db.updateEmailByClientId(id, email);
     if (success) {
-      res.json({ message: 'Email updated successfully' });
+      res.json({ message: '/uuid/:id/email Email updated successfully' });
     } else {
-      res.status(404).json({ error: 'Client not found' });
+      res.status(404).json({ error: '/uuid/:id/email Client not found' });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -82,9 +82,9 @@ router.delete('/uuid/:id', async (req, res) => {
   try {
     const success = db.deleteClientById(id);
     if (success) {
-      res.json({ message: 'Client deleted successfully' });
+      res.json({ message: '/uuid/:id Client deleted successfully' });
     } else {
-      res.status(404).json({ error: 'Client not found' });
+      res.status(404).json({ error: '/uuid/:id Client not found' });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });

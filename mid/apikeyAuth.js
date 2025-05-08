@@ -1,6 +1,6 @@
 const logger = require('../log/logger');
 
-const API_KEY = process.env.API_KEY || 'your key'; // 建议从环境变量中读取密钥
+const API_KEY = process.env.API_KEY || 'your-key'; // 建议从环境变量中读取密钥
 
 function apiKeyAuth(req, res, next) {
     logger.info(`apiKeyAuth ip: ${req.ip}, cf-connecting-ip: ${req.headers['cf-connecting-ip']}`); // 记录请求头信息
