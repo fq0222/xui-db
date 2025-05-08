@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/dbHandler');
+const logger = require('../log/logger');
 
 
 // 读取 client_infos 表的全部内容
@@ -16,6 +17,7 @@ router.get('/info-list', async (req, res) => {
 // 根据 email 查询 client_infos 表中的 up, down, total 字段的值
 router.get('/flow/:email/flow', async (req, res) => {
     const { email } = req.params;
+    logger.info(`Fetching flow for email: ${email}`);
     try {
         const clientInfo = db.getClientInfoFlowByEmail(email);
         const response = {
@@ -59,6 +61,7 @@ router.put('/uuid/:id/enable', async (req, res) => {
 router.put('/uuid/:id/email', async (req, res) => {
   const { id } = req.params;
   const { email } = req.body;
+  logger.info(`Updating email for client ID: ${id} to ${email}`);
 
   try {
     const success = db.updateEmailByClientId(id, email);

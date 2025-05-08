@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const xuiRouter = require('./routes/xui');
 const logger = require('./log/logger'); // 引入 logger 模块
-const ipWhitelist = require('./mid/ipWhitelist'); // 引入 IP 白名单中间件
+const apiKeyAuth = require('./mid/apiKeyAuth'); // 引入 IP 白名单中间件
 
 
 const PORT = process.env.PORT || 21211;
@@ -22,7 +22,7 @@ if (PORT === 21211) {
 }
 
 // 使用 clients 路由模块
-app.use('/xuiop', ipWhitelist, xuiRouter);
+app.use('/xuiop', apiKeyAuth, xuiRouter);
 
 
 // 启动服务器
