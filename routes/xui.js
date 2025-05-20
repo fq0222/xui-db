@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/dbHandler');
 const logger = require('../log/logger');
+const { restartXUI } = require('../shell/xuiRestart');
 
 
 // 读取 client_infos 表的全部内容
@@ -103,6 +104,33 @@ router.put('/uuid/:id', async (req, res) => {
     } else {
       res.status(404).json({ error: '/uuid/:id Client not found' });
     }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 根据邮箱清空 client_infos 表中的上下行流量
+router.delete('/flow/:email', async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const success = db.clearClientFlowByEmail(email);
+    if (success) {
+      res.json({ message: '/flow/:email Flow cleared successfully' });
+    } else {
+      res.status(404).json({ error: '/flow/:email Client not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 重启 x-ui
+router.post('/restart', async (req, res) => {
+  try {
+    const result = await restartXUI();
+    logger.info('x-ui restarted successfully');
+    res.json({ message: 'x-ui restarted successfully', result });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

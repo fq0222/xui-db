@@ -189,6 +189,20 @@ function updateClientIdByClientId(id, newId) {
   }
 }
 
+// 根据邮箱清空 client_infos 表中的上行和下行流量
+function clearClientFlowByEmail(email) {
+    try {
+        const stmt = db.prepare('UPDATE client_infos SET up = 0, down = 0 WHERE email = ?');
+        const result = stmt.run(email);
+        if (result.changes === 0) {
+            throw new Error(`Client with email ${email} not found`);
+        }
+        return true;
+    } catch (err) {
+        throw new Error(`Error clearing flow by email: ${err.message}`);
+    }
+}
+
 module.exports = {
     getAllClients,
     getClientsFromSettings,
@@ -196,5 +210,6 @@ module.exports = {
     updateEmailByClientId,
     deleteClientById,
     getClientInfoFlowByEmail,
-    updateClientIdByClientId, // 新增方法
+    updateClientIdByClientId,
+    clearClientFlowByEmail, // 新增方法
 };
