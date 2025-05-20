@@ -91,4 +91,21 @@ router.delete('/uuid/:id', async (req, res) => {
   }
 });
 
+// 根据 clients 的 id 修改 clients 的 id
+router.put('/uuid/:id', async (req, res) => {
+  const { id } = req.params;
+  const { newId } = req.body;
+
+  try {
+    const success = db.updateClientIdByClientId(id, newId);
+    if (success) {
+      res.json({ message: '/uuid/:id Client ID updated successfully' });
+    } else {
+      res.status(404).json({ error: '/uuid/:id Client not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

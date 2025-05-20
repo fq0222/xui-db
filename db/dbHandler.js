@@ -157,6 +157,37 @@ function deleteClientById(clientId) {
     }
 }
 
+// 根据 clients 的 id 修改 clients 的 client_id 
+function updateClientIdByClientId(id, newId) {
+  try {
+      // 从 settings 中找到对应的 client
+      const stmt = db.prepare("SELECT settings FROM inbounds WHERE JSON_EXTRACT(settings, '$.clients') IS NOT NULL");
+      const row = stmt.get();
+      if (!row || !row.settings) {
+          throw new Error('No valid settings data found in inbounds table');
+      }
+
+      const settings = JSON.parse(row.settings);
+      const client = settings.clients.find((c) => c.id === id);
+      if (!client) {
+          throw new Error(`Client with id ${id} not found`);
+      }
+
+      // 更新 settings 中的 client_id
+      client.id = newId;
+
+      // 更新 inbounds 表中的 settings 字段
+      const updateSettingsStmt = db.prepare("UPDATE inbounds SET settings = ? WHERE JSON_EXTRACT(settings, '$.clients') IS NOT NULL");
+      const settingsResult = updateSettingsStmt.run(JSON.stringify(settings));
+      if (settingsResult.changes === 0) {
+          throw new Error('Failed to update client_id in settings');
+      }
+
+      return true;
+  } catch (err) {
+      throw new Error(`Error updating clientId by clientId: ${err.message}`);
+  }
+}
 
 module.exports = {
     getAllClients,
@@ -164,5 +195,6 @@ module.exports = {
     updateEnableByClientId,
     updateEmailByClientId,
     deleteClientById,
-    getClientInfoFlowByEmail, // 新增方法
+    getClientInfoFlowByEmail,
+    updateClientIdByClientId, // 新增方法
 };
